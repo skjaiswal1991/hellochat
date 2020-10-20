@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { View, Text,TextInput,Button,StyleSheet } from 'react-native';
+import { View, Text,TextInput,Button,StyleSheet,TouchableOpacity,TouchableHighlight } from 'react-native';
 
 class loginform extends Component {
   constructor(props) {
@@ -9,9 +9,8 @@ class loginform extends Component {
   }
 
   hendler = () =>{
-      alert(this.state.username);
-      
-      //this.props.history.push('/userlist');
+      //alert(this.state.username);
+      this.props.onCreate(this.state.username)
   }
 
 
@@ -19,18 +18,20 @@ class loginform extends Component {
   render() {
       const { username } = this.state;
     return (
-      <View style={Styles.container} >
-            <TextInput name='username' value={username} style={Styles.input} onChangeText={(text)=>this.setState({username:text})} placeholder="Enter the username"></TextInput>
-            <Button style={Styles.Button} title='Login' onPress={this.hendler} />
+      <View style={styles.container} >
+            <TextInput name='username' value={username} style={styles.input} onChangeText={(text)=>this.setState({username:text})} placeholder="Enter the username"></TextInput>
+              <TouchableOpacity style={styles.button} activeOpacity={0.7} title='Login' onPress={this.hendler} >
+                <Text style={styles.text}>create</Text>
+              </TouchableOpacity>
       </View>
     );
   }
 }
 
 
-const Styles = StyleSheet.create({
+const styles = StyleSheet.create({
     container: {
-        flex:1,
+        flex:2,
         color:'white',
         paddingLeft:10,
         paddingRight:10,
@@ -43,8 +44,15 @@ const Styles = StyleSheet.create({
         height:40,
         marginBottom:10,
     },
-    Button:{
-       // paddingTop:10,
-    }
+    button: {
+      borderRadius: 4,   
+      borderColor: 'green',
+      backgroundColor: '#F88',
+    },
+    text: {
+      textAlign:"center",
+      fontSize: 18,
+      padding: 12,
+    },
 }) 
 export default loginform;
