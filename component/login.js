@@ -1,11 +1,9 @@
 import React, { Component } from 'react';
-import { View, Text, StyleSheet,Image } from 'react-native';
+import { View, Text, StyleSheet,Image,AsyncStorage } from 'react-native';
 import Loginform from './common/loginform';
 import { createStackNavigator, createAppContainer } from 'react-navigation';
 import { socket } from '../module/socket';
-//import socket  from '../module/socket';
-
-// console.log(socket);
+import {_storeData,_retrieveData} from './common/storage';
 class login extends Component {
   constructor(props) {
     super(props);
@@ -21,17 +19,18 @@ class login extends Component {
   }
   
 
-  loginhendler = (e) =>{ 
+  loginhendler = async(e) =>{ 
     //console.log(this.props);
-      console.log(e);
+    const {username} = this.state;
       socket.emit('user',{txt:e})
       socket.on('user',(data)=>{
-        console.log(data);
-        
         if(data.status ==='success'){
-            //alert(data.txt);
-            this.setState({status:true});
 
+            let localData = [{key:'username',value:e},{key:'userID',value:data.userid}]
+            _storeData(localData);
+           
+            
+            this.setState({status:true});            
             this.props.navigation.navigate('List'); 
         }else{
             alert(data.txt);
@@ -44,14 +43,8 @@ class login extends Component {
   }
 
   loginSubmitHendler =(e)=>{
-      console.log(socket);
-      console.log(e);
-      console.log('JKSADSDF');
-
       this.setState({username:e});
-      
-      
-         
+        
   }
   render() {
     const { count } = this.state;
@@ -70,7 +63,6 @@ class login extends Component {
 const Styles = StyleSheet.create({
   container: {
       flex:1,
-      color:'white',
       justifyContent: 'space-between',
   },
  

@@ -1,7 +1,8 @@
 import React, { Component } from 'react';
-import { View, Text,TextInput,Button,StyleSheet,TouchableOpacity,TouchableHighlight } from 'react-native';
+import { View, Text,TextInput,Button,StyleSheet,TouchableOpacity,TouchableHighlight,AsyncStorage } from 'react-native';
 import { socket } from '../module/socket';
 import ChatForm from './common/chatform';
+import {_storeData,_retrieveData} from './common/storage';
 
 const msgData = {
       msg:[{'sanjay':'Hello'},{'ajay':'how are you Sanjay'}],
@@ -12,40 +13,81 @@ class Chat extends Component {
   constructor(props) {
     super();
     this.state = {
-                  username:'sanjay',
-                  msg:msgData.msg,
+                  username:'',
+                  senderID:'',
+                  msg:[],
+                  reciveMsgUser:'',
                   check:[{'asd':'asdas'}],
-                  sendUser: props.route.params.thread
+                  reciverID: props.route.params.thread
                 }
     console.log('ip');
     console.log(props.route.params.thread);
+
+    _retrieveData('username').then(uname=>{
+        this.setState({username:uname})
+    })
+    _retrieveData('userID').then(uid=>{
+        this.setState({senderID:uid})
+    })
+    console.log(this.state.username);
+    socket.on('privateRecive',(data)=>{
+      console.log(data);
+      this.update_msg(data.data.sendData.sender.username,data.data.sendData.msg)
+    })
   }
 
+  update_msg = (id,msg) =>{
+
+    var newMsg = this.state.msg;
+    newMsg.push({[id]:msg})
+    this.setState({msg:newMsg})
+  }
+
+  
+  _retrieveData = async () => {
+    try {
+      const value = await AsyncStorage.getItem('username');
+      if (value !== null) {
+        // We have data!!
+        // console.log(value);
+        this.setState({senderID:value})
+      }
+    } catch (error) {
+      // Error retrieving data
+    }
+  }
+
+  
+ 
   hendler = () =>{
       //alert(this.state.username);
       this.props.onCreate(this.state.username)
   }
 
   messHendler = (data) =>{
+    console.log(data);
+    const { username,senderID,reciverID} = this.state;
+    var sendData  = {msg:data.msg,sender:{username,senderID},reiverId:reciverID}
+    this.update_msg(username,data.msg)
+    socket.emit('PrivateMsg',{sendData})
 
-    socket.emit('PrivateMsg',{data})
-     console.log(data);
+    //  console.log(data);
     //let msgd = this.state.msg;
 
-    this.setState({msg:[...this.state.msg,data]});
+    // this.setState({msg:[...this.state.msg,data]});
 
-    console.log('Msg data');
-    console.log(this.state.check);
-    setTimeout(()=>{
-      let fafa = {'ajay':'ok'}
-      this.setState({msg:[...this.state.msg,fafa]});
-    },300)
+    // console.log('Msg data');
+    // console.log(this.state.check);
+    // setTimeout(()=>{
+    //   let fafa = {'ajay':'ok'}
+    //   this.setState({msg:[...this.state.msg,fafa]});
+    // },300)
    
   }
 
 
   render() {
-      const { username,msg } = this.state;
+      const { username,msg,reciverID,senderID } = this.state;
       console.log(msg);
     return (
 
@@ -54,13 +96,13 @@ class Chat extends Component {
             <View style={styles.message}>
                 {msg.map((msg,i)=>(
                   <>
-                    {msg['sanjay'] ? (
+                    {msg[reciverID.username] ? (
                         <View>
-                          <Text style={styles.text1}>{msg['sanjay']}</Text>
+                          <Text style={styles.text1}>{msg[reciverID.username]}</Text>
                         </View>
                     ): ( 
-                      <View>
-                        <Text style={styles.text2}>{msg['ajay']}</Text>
+                      <View >
+                        <Text style={styles.text2}>{msg[username]}</Text>
                       </View>
                     )}
                   </>
@@ -72,7 +114,7 @@ class Chat extends Component {
                 ))}                
             </View> */}
             <View style={styles.form}>
-                <ChatForm Sendmessage={this.messHendler} UserData={this.state.sendUser}/>
+                <ChatForm Sendmessage={this.messHendler} UserData={this.state}/>
             </View>
 
       </View>
@@ -90,7 +132,7 @@ const styles = StyleSheet.create({
     
     messageOther:{
       flex:1,
-      // alignItems:'flex-end',
+      alignItems:'flex-end',
         
     },
 
@@ -98,11 +140,11 @@ const styles = StyleSheet.create({
        flex:1,    
         flexDirection: 'column',
         // height:20  ,
-        // justifyContent: 'flex-end'
+        //justifyContent: 'flex-end'
     },
 
     text2:{
-      //textAlign: 'left',
+      //textAlign: 'end',
     },
     test1:{
      width:300,

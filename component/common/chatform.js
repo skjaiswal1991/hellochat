@@ -1,17 +1,19 @@
 import React, { Component } from 'react';
-import { View, Text,TextInput,Button,StyleSheet,TouchableOpacity,TouchableHighlight } from 'react-native';
+import { View, Text,TextInput,Button,StyleSheet,TouchableOpacity,TouchableHighlight,AsyncStorage } from 'react-native';
 import { Directions } from 'react-native-gesture-handler';
 
 class ChatForm extends Component {
   constructor(props) {
     super();
-    this.state = {username:'sanjay',msg:''}
+    this.state = {username:'',msg:''}
     
   }
 
   hendler = (e) =>{
      console.log(this.props.UserData);
-      let msg = {msg:this.state.msg,username:this.props.UserData.username,userId:this.props.UserData.id}
+      let msg = {
+                    msg:this.state.msg,
+                    }
       this.props.Sendmessage(msg);
       this.setState({msg:''});
   }

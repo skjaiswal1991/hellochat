@@ -1,14 +1,10 @@
 const express = require('express');
-const app = express('');
-const localStorage = require('localStorage');
-const { emit } = require('nodemon');
+const app = express();
 const PORT = 3020;
 const socket = require('socket.io');
-const { Socket } = require('socket.io-client');
 const server = app.listen(PORT);
 const io = socket(server)
 
-const tictic = require('./model/tictic');
 app.use(express.static(__dirname+'/public'));
 
 //const io = socket();
@@ -47,6 +43,7 @@ io.on('connection',(socket)=>{
     })
 
     socket.on('user',(data)=>{
+        
         // let userName = ListUsers.find(
         //     (element,i) => {
         //         console.log(element);
@@ -69,7 +66,7 @@ io.on('connection',(socket)=>{
 
             ListUsers[socket.username] = socket.id;
             // ListUsers.push({[data.txt]:socket.id});
-            io.emit('user',{txt:'user Is created',status:'success'})
+            io.emit('user',{txt:'user Is created',status:'success',userid:socket.id,username:socket.username})
         }
     //    console.log(ListUsers[data.txt])   
     //     if(!ListUsers[data.txt]){
@@ -99,15 +96,27 @@ io.on('connection',(socket)=>{
     // },3000)
     
     socket.on('disconnect',()=>{
-        console.log(` disconnect  the connection${socket.id}`);
+        console.log(ListUsers)
+        Object.values(ListUsers).filter(function(emp) {
+            console.log(emp);
+            console.log("EMP");
+            if (emp == socket.id) {
+                return false;
+            }
+            return true;
+        });
+        console.log(` disconnect  the connection ${socket.id}`);
+
     })
 
 
     // Private message 
 
     socket.on('PrivateMsg',(data)=>{
+        
         console.log(data);
-        socket.to(data.username).emit('')
+        console.log(data.sendData.reiverId.id);
+        io.to(data.sendData.reiverId.id).emit('privateRecive',{data})
         
     })
 

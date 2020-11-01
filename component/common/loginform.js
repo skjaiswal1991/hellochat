@@ -31,8 +31,7 @@ class loginform extends Component {
 
 const styles = StyleSheet.create({
     container: {
-        flex:2,
-        color:'white',
+        flex:2,        
         paddingLeft:10,
         paddingRight:10,
        // justifyContent: 'space-between',
