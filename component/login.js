@@ -20,18 +20,22 @@ class login extends Component {
   
 
   loginhendler = async(e) =>{ 
+    console.log(e);
     //console.log(this.props);
     const {username} = this.state;
       socket.emit('user',{txt:e})
       socket.on('user',(data)=>{
+        console.log(data);
         if(data.status ==='success'){
-
-            let localData = [{key:'username',value:e},{key:'userID',value:data.userid}]
-            _storeData(localData);
-           
+            if(e == data.username){
+              let localData = [{key:'username',value:e},{key:'userID',value:data.userid}]
+              _storeData(localData);
+             
+              
+              this.setState({status:true});            
+              this.props.navigation.navigate('List'); 
+            }
             
-            this.setState({status:true});            
-            this.props.navigation.navigate('List'); 
         }else{
             alert(data.txt);
         }

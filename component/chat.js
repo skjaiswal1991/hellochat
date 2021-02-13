@@ -1,9 +1,13 @@
 import React, { Component } from 'react';
-import { View, Text,TextInput,Button,StyleSheet,TouchableOpacity,TouchableHighlight,AsyncStorage } from 'react-native';
+//export { default as Untitled } from "./src/screens/Untitled.js";
+export { default as Untitled } from "./../src/screens/Untitled.js";
+import { View, Text,TextInput,Button,StyleSheet,TouchableOpacity,TouchableHighlight } from 'react-native';
 import { socket } from '../module/socket';
 import ChatForm from './common/chatform';
+import SenderElement from './element/sender.element'
+import ReceiveElement from './element/receiver.element'
 import {_storeData,_retrieveData} from './common/storage';
-
+import AsyncStorage from '@react-native-async-storage/async-storage';
 const msgData = {
       msg:[{'sanjay':'Hello'},{'ajay':'how are you Sanjay'}],
       check:[{'asd':'asdas'}]
@@ -97,13 +101,21 @@ class Chat extends Component {
                 {msg.map((msg,i)=>(
                   <>
                     {msg[reciverID.username] ? (
-                        <View>
-                          <Text style={styles.text1}>{msg[reciverID.username]}</Text>
-                        </View>
-                    ): ( 
-                      <View >
-                        <Text style={styles.text2}>{msg[username]}</Text>
+                      <View>
+                        <ReceiveElement msg={msg[reciverID.username]} />
                       </View>
+                      
+                        // <View>                          
+                        //   <Text style={styles.text1}>{reciverID.username}:{msg[reciverID.username]}</Text>
+                        // </View>
+                    ): (
+                      <View >
+                        <SenderElement msg={msg[username]} /> 
+                      </View>
+                      
+                      // <View >
+                      //   <Text style={styles.text2}>{msg[username]}</Text>
+                      // </View>
                     )}
                   </>
                 ))}                
@@ -151,7 +163,18 @@ const styles = StyleSheet.create({
      borderColor:'gray',
      borderWidth:1,
      textAlign: 'right',
-    }  
+    },
+    materialChipWithImage: {
+      width: 172,
+      height: 32,
+      marginTop: -644,
+      marginLeft: 15
+    },
+    materialChipWithImage1: {
+      width: 169,
+      height: 32,
+      marginLeft: 188
+    }
     
     
 }) 

@@ -1,5 +1,7 @@
 import React, { Component } from 'react';
-import { View, Text, StyleSheet,Image,AsyncStorage } from 'react-native';
+import { View, Text, StyleSheet,Image } from 'react-native';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+
 export const _storeData = async (data) => {    
     try {
         console.log(data);

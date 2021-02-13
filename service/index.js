@@ -57,17 +57,17 @@ io.on('connection',(socket)=>{
            /// ListUsers.push(uList);
         // console.log(userName);
         // console.log(data);
-        if(data.txt in ListUsers){
-            io.emit('user',{txt:'user Already Exist',status:'fail'})
-        
-        }else{  
+        //if(data.txt in ListUsers){
+           // io.emit('user',{txt:'user Already Exist',status:'fail'})
+            
+       //}else{  
 
             socket.username = data.txt
 
             ListUsers[socket.username] = socket.id;
             // ListUsers.push({[data.txt]:socket.id});
             io.emit('user',{txt:'user Is created',status:'success',userid:socket.id,username:socket.username})
-        }
+        //}
     //    console.log(ListUsers[data.txt])   
     //     if(!ListUsers[data.txt]){
             
